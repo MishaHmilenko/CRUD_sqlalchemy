@@ -1,11 +1,10 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy.dialects import postgresql
 
-from sqlalchemy import String, ForeignKey, DateTime, UUID
+from sqlalchemy import String, ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy_utils import force_auto_coercion, EmailType, PasswordType
+from sqlalchemy_utils import force_auto_coercion
 
 from src.db.main import Base
 
@@ -32,7 +31,7 @@ class UserToken(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     user_id: Mapped[int] = mapped_column(ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    token: Mapped[UUID] = mapped_column(UUID, default=uuid.uuid4)
+    token: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     expires: Mapped[datetime] = mapped_column()
 
     user: Mapped['User'] = relationship(

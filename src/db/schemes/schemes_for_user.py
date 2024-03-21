@@ -32,3 +32,8 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
+
+
+class LoginUser(BaseModel):
+    email: str
+    password: str
