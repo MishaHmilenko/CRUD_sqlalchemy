@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-
+from typing import List
 
 from sqlalchemy import String, ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -25,6 +25,10 @@ class User(Base):
         cascade='all, delete-orphan'
     )
 
+    created_rooms: Mapped[List['Room']] = relationship(back_populates='creator')
+
+    comments: Mapped[List['Comment']] = relationship(back_populates='user')
+
 
 class UserToken(Base):
     __tablename__ = 'user_token'
@@ -34,7 +38,4 @@ class UserToken(Base):
     token: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid.uuid4)
     expires: Mapped[datetime] = mapped_column()
 
-    user: Mapped['User'] = relationship(
-        'User',
-        back_populates='token',
-    )
+    user: Mapped['User'] = relationship(back_populates='token')

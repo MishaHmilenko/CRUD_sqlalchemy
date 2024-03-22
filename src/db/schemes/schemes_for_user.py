@@ -4,11 +4,14 @@ from pydantic import BaseModel, constr, UUID4, Field, field_validator, EmailStr
 
 
 class UserBase(BaseModel):
+    id: int
     name: str
     email: EmailStr
 
 
-class UserCreate(UserBase):
+class UserCreate(BaseModel):
+    name: str
+    email: EmailStr
     password: constr(strip_whitespace=True, min_length=8)
 
 
@@ -27,7 +30,6 @@ class TokenBase(BaseModel):
 
 
 class User(UserBase):
-    id: int | None = None
     token: TokenBase | None = None
 
     class Config:

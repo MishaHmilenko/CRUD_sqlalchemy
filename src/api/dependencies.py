@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -17,9 +19,7 @@ async def get_db() -> AsyncSession:
 async def get_current_user(
         token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
 ) -> User:
-    print(token)
     user = await get_user_by_token(token, db)
-    print(user)
 
     if not user:
         raise HTTPException(
@@ -29,3 +29,7 @@ async def get_current_user(
         )
 
     return user
+
+
+DBSession = Annotated[AsyncSession, Depends(get_db)]
+CurrentUser = Annotated[AsyncSession, Depends(get_current_user)]
