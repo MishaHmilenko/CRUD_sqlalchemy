@@ -1,12 +1,16 @@
 import uuid
 from datetime import datetime
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from sqlalchemy import String, ForeignKey, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy_utils import force_auto_coercion
 
 from src.db.main import Base
+
+if TYPE_CHECKING:
+    from .comment import Comment
+    from .room import Room
 
 force_auto_coercion()
 

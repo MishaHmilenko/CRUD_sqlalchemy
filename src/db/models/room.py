@@ -1,10 +1,14 @@
 from datetime import datetime
-from typing import List
+from typing import List, TYPE_CHECKING
 
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.db.main import Base
+
+if TYPE_CHECKING:
+    from .users import User
+    from .comment import Comment
 
 
 class Room(Base):
@@ -16,6 +20,6 @@ class Room(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
     creator_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
 
-    comments: Mapped[List['Comments']] = relationship(back_populates='room')
+    comments: Mapped[List['Comment']] = relationship(back_populates='room')
 
     creator: Mapped['User'] = relationship(back_populates='created_rooms')
