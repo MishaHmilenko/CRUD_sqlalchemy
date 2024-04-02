@@ -22,13 +22,18 @@ async def create_room(user: User, room: RoomCreate, db: AsyncSession):
     return db_room
 
 
+async def get_all_rooms(db: AsyncSession):
+    query = select(Room)
+    return query
+
+
 async def get_room_by_id(room_id, db: AsyncSession):
     query = select(Room).where(Room.id == room_id)
     result = await db.execute(query)
     return result.scalars().first()
 
 
-async def get_own_rooms(user: User, db: AsyncSession):
+async def get_rooms_by_user_id(user: User, db: AsyncSession):
     query = select(Room).where(Room.creator_id == user.id)
     results = await db.execute(query)
     return results.scalars().all()

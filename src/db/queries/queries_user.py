@@ -6,7 +6,7 @@ from sqlalchemy.orm import joinedload
 
 from src.api.controllers.utils.utils_users import hash_password, get_random_string
 from src.db import User, UserToken
-from src.db.schemes.schemes_for_user import UserCreate
+from src.db.schemes.schemes_user import UserCreate
 
 
 async def get_user_by_id(user_id: int, db: AsyncSession) -> User:
