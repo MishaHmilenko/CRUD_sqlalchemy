@@ -59,7 +59,8 @@ async def update_room_by_id(room_id: int, room_data: RoomUpdate, user: User, db:
     return result.scalars().first()
 
 
-async def delete_room_by_id(room_id: int, db: AsyncSession):
-    query = delete(Room).where(Room.id == room_id)
+async def delete_room_by_id(room_id: int, user: User, db: AsyncSession):
+    query = delete(Room).where(Room.id == room_id).where(Room.creator_id == user.id)
+
     await db.execute(query)
     await db.commit()

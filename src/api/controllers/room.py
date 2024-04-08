@@ -21,6 +21,11 @@ async def create_room(room_data: RoomCreate, user: CurrentUser, db: DBSession):
     return room
 
 
+@router.get('/own', response_model=list[RoomBase])
+async def get_all_own_rooms(user: CurrentUser, db: DBSession):
+    return await queries_room.get_rooms_by_user_id(user, db)
+
+
 @router.get('/{room_id}')
 async def get_room(request: Request, room_id: int):
     return templates.TemplateResponse(
@@ -32,11 +37,6 @@ async def get_room(request: Request, room_id: int):
 async def get_rooms(db: DBSession) -> Page[RoomBase]:
     rooms = await queries_room.get_all_rooms(db)
     return await paginate(db, rooms)
-
-
-@router.get('/own', response_model=list[RoomBase])
-async def get_all_own_rooms(user: CurrentUser, db: DBSession):
-    return await queries_room.get_rooms_by_user_id(user, db)
 
 
 @router.put('/update/{room_id}', response_model=RoomBase)
@@ -55,5 +55,5 @@ async def delete_room(room_id: int, user: CurrentUser, db: DBSession):
     await is_room_exist(room_id, db)
     await is_owner(room_id, user, db)
 
-    await queries_room.delete_room_by_id(room_id, db)
+    await queries_room.delete_room_by_id(room_id, user, db)
     return {'status_code': 204, 'detail': 'Deleted successfully'}
