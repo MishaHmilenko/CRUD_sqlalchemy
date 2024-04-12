@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-from src.db.schemes.schemes_user import UserBase
+from src.business_logic.user.dto import UserBase
 
 
 class CommentBase(BaseModel):

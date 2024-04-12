@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from src.db.schemes.schemes_user import UserBase
+from src.business_logic.user.dto import UserBase
 
 
 class RoomBase(BaseModel):

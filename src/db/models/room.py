@@ -20,6 +20,6 @@ class Room(Base):
     created_at: Mapped[datetime] = mapped_column(default=datetime.now())
     creator_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
 
-    comments: Mapped[List['Comment']] = relationship(back_populates='room')
+    comments: Mapped[List['Comment']] = relationship(back_populates='room', cascade='all, delete-orphan')
 
     creator: Mapped['User'] = relationship(back_populates='created_rooms')
