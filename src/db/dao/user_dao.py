@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import joinedload
 
-from src.api.controllers.utils.utils_users import get_random_string, hash_password
+from src.api.controllers.utils.utils_users import hash_password
 from src.business_logic.user.dto import UserCreate
 from src.db import User, UserToken
 from src.db.dao.main import BaseDAO
@@ -32,10 +32,9 @@ class UserDAO(BaseDAO):
         return token.user
 
     async def create_user(self, user: UserCreate) -> User:
-        salt = get_random_string()
         hashed_password = hash_password(user.password)
 
-        db_user = User(name=user.name, email=user.email, password=f'{salt}${hashed_password}')
+        db_user = User(name=user.name, email=user.email, password=hashed_password)
         self._session.add(db_user)
         await self._session.commit()
         await self._session.refresh(db_user)

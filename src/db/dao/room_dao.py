@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from fastapi_pagination import Page
+from fastapi_pagination.ext.async_sqlalchemy import paginate
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
 
-from src.business_logic.room.dto import RoomCreate, RoomUpdate
+from src.business_logic.room.dto import RoomCreate, RoomUpdate, RoomBase
 from src.db import Room, User
 from src.db.dao.main import BaseDAO
 
@@ -24,22 +26,20 @@ class RoomDAO(BaseDAO):
         await self._session.refresh(db_room)
         return db_room
 
-    async def get_all_rooms(self) -> list[Room]:
+    async def get_all_rooms(self) -> Page[RoomBase]:
         query = select(Room).options(selectinload(Room.creator))
-        result = await self._session.execute(query)
-        return list(result.scalars().all())
+        return await paginate(self._session, query)
 
     async def get_room_by_id(self, room_id: int) -> Room:
         query = select(Room).where(Room.id == room_id)
         result = await self._session.execute(query)
         return result.scalars().first()
 
-    async def get_rooms_by_user_id(self, user: User) -> list[Room]:
+    async def get_rooms_by_user_id(self, user: User) -> Page[RoomBase]:
         query = select(Room).where(Room.creator_id == user.id)
-        result = await self._session.execute(query)
-        return list(result.scalars().all())
+        return await paginate(self._session, query)
 
-    async def get_owner_by_room_id(self, room_id: int): # !
+    async def get_owner_id_by_room_id(self, room_id: int) -> int:
         query = select(Room.creator_id).where(Room.id == room_id)
         result = await self._session.execute(query)
         return result.scalars().first()
@@ -50,7 +50,7 @@ class RoomDAO(BaseDAO):
             .values(name=room_data.name, description=room_data.description)
             .where(Room.id == room_id)
             .where(Room.creator_id == user.id)
-            .returning(Room)
+            .returning(Room).options(selectinload(Room.creator))
         )
 
         result = await self._session.execute(query)

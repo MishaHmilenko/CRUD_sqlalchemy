@@ -1,10 +1,14 @@
 from fastapi import APIRouter
+from fastapi_pagination import Page
+from fastapi_pagination.ext.async_sqlalchemy import paginate
+from sqlalchemy import select
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
 from src.api.dependencies import CurrentUser
 from src.business_logic.room.dto import RoomBase, RoomCreate, RoomUpdate
 from src.business_logic.room.main import RoomLogicService
+from src.db import Room
 
 router = APIRouter(prefix='/rooms', tags=['room'])
 templates = Jinja2Templates(directory="static/templates")
@@ -15,7 +19,7 @@ async def create_room(room_data: RoomCreate, user: CurrentUser, service: RoomLog
     return await service.create_room(room_data, user)
 
 
-@router.get('/own', response_model=list[RoomBase])
+@router.get('/own', response_model=Page[RoomBase])
 async def get_all_own_rooms(user: CurrentUser, service: RoomLogicService):
     return await service.get_all_own_rooms(user)
 
@@ -28,7 +32,7 @@ async def get_room(room_id: int, request: Request):
     )
 
 
-@router.get('/', response_model=list[RoomBase])
+@router.get('/', response_model=Page[RoomBase])
 async def get_rooms(service: RoomLogicService):
     return await service.get_all_rooms()
 

@@ -3,9 +3,10 @@ from typing import Annotated
 from fastapi import Depends
 
 from src.api.stub import Stub
-from src.business_logic.comment.dto import CommentUpdate
+from src.business_logic.comment.dto import CommentUpdate, CommentBase
 from src.business_logic.comment.exceptions import CommentNotExist, NotOwnerOfComment
 from src.business_logic.room.exceptions import RoomNotExist
+from src.business_logic.user.dto import UserBase
 from src.db import User, Comment
 from src.db.dao.comment_dao import CommentDAO
 from src.db.dao.room_dao import RoomDAO
@@ -18,7 +19,7 @@ class CommentBusinessLogicService:
         self._dao_room = dao_room
         self._dao_user = dao_user
 
-    async def create_comment(self, content: str, room_id: int, user_token: str) -> Comment:
+    async def create_comment(self, content: str, room_id: int, user_token: str) -> CommentBase:
         user = await self._dao_user.get_user_by_token(user_token)
 
         if self._dao_room.get_room_by_id(room_id) is None:
@@ -26,17 +27,28 @@ class CommentBusinessLogicService:
 
         comment = await self._dao_comment.create_comment(content, room_id, user)
 
-        return comment
+        return CommentBase(
+            id=comment.id,
+            content=comment.content,
+            user=UserBase(id=user.id, name=user.name, email=user.email)
+        )
 
-    async def get_comments(self, room_id: int, skip: int, limit: int) -> list[Comment]:
+    async def get_comments(self, room_id: int, skip: int, limit: int) -> list[CommentBase]:
 
-        if self._dao_room.get_room_by_id(room_id) is None:
+        if await self._dao_room.get_room_by_id(room_id) is None:
             raise RoomNotExist()
 
         comments = await self._dao_comment.get_comments(room_id, skip, limit)
-        return comments
+        return [
+            CommentBase(
+                id=comment.id,
+                content=comment.content,
+                user=UserBase(id=comment.user.id, name=comment.user.name, email=comment.user.email)
+            )
+            for comment in comments
+        ]
 
-    async def update_comment(self, comment_id: int, comment_data: CommentUpdate, user: User):
+    async def update_comment(self, comment_id: int, comment_data: CommentUpdate, user: User) -> CommentBase:
 
         if await self._dao_comment.get_comment_by_id(comment_id) is None:
             raise CommentNotExist()
@@ -45,7 +57,7 @@ class CommentBusinessLogicService:
             raise NotOwnerOfComment()
 
         comment = await self._dao_comment.update_comment_by_id(comment_id, comment_data, user)
-        return comment
+        return CommentBase(id=comment.id, content=comment.content, user=user)
 
     async def delete_comment(self, comment_id: int, user: User):
 

@@ -1,5 +1,6 @@
 from typing import Annotated, AsyncGenerator
 
+from argon2 import PasswordHasher
 from fastapi import FastAPI, Depends
 from fastapi_pagination import add_pagination
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, AsyncEngine
@@ -28,8 +29,11 @@ def factory_room_dao(session: Annotated[AsyncSession, Depends(Stub(AsyncSession)
     return RoomDAO(session=session)
 
 
-def factory_room_logic_service(dao: Annotated[RoomDAO, Depends(Stub(RoomDAO))]) -> RoomBusinessLogicService:
-    return RoomBusinessLogicService(dao=dao)
+def factory_room_logic_service(
+        dao_room: Annotated[RoomDAO, Depends(Stub(RoomDAO))],
+        dao_user: Annotated[UserDAO, Depends(Stub(UserDAO))],
+) -> RoomBusinessLogicService:
+    return RoomBusinessLogicService(dao_room=dao_room, dao_user=dao_user)
 
 
 def factory_comment_dao(session: Annotated[AsyncSession, Depends(Stub(AsyncSession))]) -> CommentDAO:
