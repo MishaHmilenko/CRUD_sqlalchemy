@@ -7,7 +7,7 @@ from src.api.stub import Stub
 from src.business_logic.room.dto import RoomCreate, RoomUpdate, RoomBase
 from src.business_logic.room.exceptions import RoomNotExist, NotOwnerOfRoom
 from src.business_logic.user.dto import UserBase
-from src.db import User, Room
+from src.db import User
 from src.db.dao.room_dao import RoomDAO
 from src.db.dao.user_dao import UserDAO
 

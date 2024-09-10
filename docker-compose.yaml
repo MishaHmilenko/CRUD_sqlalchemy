@@ -1,0 +1,59 @@
+version: latest
+
+
+services:
+  db:
+    image: postgres
+    restart: on-failure
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ${DB_NAME} -U ${DB_USER}"]
+      interval: 5s
+      timeout: 20s
+      retries: 100
+    networks:
+      - app-network
+      - db-network
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app-container
+    restart: on-failure
+    ports:
+      - "${APP_PORT}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - app-network
+
+  alembic:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["alembic", "upgrade", "head"]
+    container_name: alembic
+    restart: on-failure
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - db-network
+
+networks:
+  app-network:
+    driver: bridge
+  db-network:
+    driver: bridge

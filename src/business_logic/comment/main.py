@@ -7,7 +7,7 @@ from src.business_logic.comment.dto import CommentUpdate, CommentBase
 from src.business_logic.comment.exceptions import CommentNotExist, NotOwnerOfComment
 from src.business_logic.room.exceptions import RoomNotExist
 from src.business_logic.user.dto import UserBase
-from src.db import User, Comment
+from src.db import User
 from src.db.dao.comment_dao import CommentDAO
 from src.db.dao.room_dao import RoomDAO
 from src.db.dao.user_dao import UserDAO

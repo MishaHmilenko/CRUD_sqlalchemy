@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker, AsyncEngine
-from sqlalchemy.orm import declarative_base, DeclarativeBase
+from sqlalchemy.orm import DeclarativeBase
 
 from src.config import db_user, db_password, db_host, db_port, db_name
 

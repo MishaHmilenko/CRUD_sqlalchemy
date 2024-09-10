@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import HTTPException, Depends
+from fastapi import Depends
 
 from src.api.controllers.utils.utils_users import validate_password
 from src.api.stub import Stub

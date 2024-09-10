@@ -1,6 +1,5 @@
 from typing import Annotated, AsyncGenerator
 
-from argon2 import PasswordHasher
 from fastapi import FastAPI, Depends
 from fastapi_pagination import add_pagination
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, AsyncEngine
