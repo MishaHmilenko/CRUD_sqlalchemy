@@ -37,8 +37,8 @@ Project stack:
     docker-compose up --build
     ```
     
-4.The application is available at
+4. The application is available at
 
-```
-127.0.0.1:8000/docs
-```
+    ```
+    127.0.0.1:8000/docs
+    ```
