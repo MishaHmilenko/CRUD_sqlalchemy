@@ -10,7 +10,7 @@ Project stack:
 -WebSocket
 ```
 
->*the project is written to strengthen technical skills 
+>the project is written to strengthen technical skills 
 
 ## Project Deployment
 1. Clone repository
@@ -21,7 +21,7 @@ Project stack:
 
 2. Create `.env` file
 
-    ```bash
+    ```
     APP_PORT=80
 
     DB_USER=your_db_user
@@ -36,3 +36,9 @@ Project stack:
     ```bash
     docker-compose up --build
     ```
+    
+4.The application is available at
+
+```
+127.0.0.1:8000/docs
+```
